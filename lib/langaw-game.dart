@@ -5,6 +5,8 @@ import 'package:flame/game.dart';
 import 'package:flame/flame.dart';
 import 'package:langaw/components/fly.dart';
 
+import 'package:flutter/gestures.dart';
+
 class LangawGame extends Game {
   Size screenSize;
   double tileSize;
@@ -34,6 +36,7 @@ class LangawGame extends Game {
 
   void update(double t) {
     flies.forEach((Fly fly) => fly.update(t));
+    flies.removeWhere((Fly fly) => fly.isOffScreen);
   }
 
   void resize(Size size) {
@@ -46,5 +49,13 @@ class LangawGame extends Game {
     double y = rnd.nextDouble() * (screenSize.height - tileSize);
 
     flies.add(Fly(this, x, y));
+  }
+
+  void onTapDown(TapDownDetails d) {
+    flies.forEach((Fly fly) {
+      if (fly.flyRect.contains(d.globalPosition)) {
+        fly.onTapDown();
+      }
+    });
   }
 }
