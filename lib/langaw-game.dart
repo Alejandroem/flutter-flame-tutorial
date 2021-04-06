@@ -12,8 +12,13 @@ import 'package:flutter/gestures.dart';
 import 'package:langaw/components/house-fly.dart';
 import 'package:langaw/components/hungry-fly.dart';
 import 'package:langaw/components/macho-fly.dart';
+import 'package:langaw/components/start-button.dart';
+import 'package:langaw/view.dart';
+import 'package:langaw/views/home-view.dart';
 
 class LangawGame extends Game {
+  View activeView = View.home;
+
   Size screenSize;
   double tileSize;
 
@@ -21,6 +26,9 @@ class LangawGame extends Game {
   Random rnd;
 
   Backyard background;
+
+  HomeView homeView;
+  StartButton startButton;
 
   LangawGame() {
     initialize();
@@ -32,6 +40,9 @@ class LangawGame extends Game {
     resize(await Flame.util.initialDimensions());
 
     background = Backyard(this);
+    homeView = HomeView(this);
+
+    startButton = StartButton(this);
 
     spawnFly();
   }
@@ -40,6 +51,12 @@ class LangawGame extends Game {
     background.render(canvas);
 
     flies.forEach((Fly fly) => fly.render(canvas));
+
+    if (activeView == View.home) homeView.render(canvas);
+
+    if (activeView == View.home || activeView == View.lost) {
+      startButton.render(canvas);
+    }
   }
 
   void update(double t) {
@@ -76,10 +93,19 @@ class LangawGame extends Game {
   }
 
   void onTapDown(TapDownDetails d) {
-    flies.forEach((Fly fly) {
-      if (fly.flyRect.contains(d.globalPosition)) {
-        fly.onTapDown();
+    bool isHandled = false;
+    if (!isHandled && startButton.rect.contains(d.globalPosition)) {
+      if (activeView == View.home || activeView == View.lost) {
+        startButton.onTapDown();
+        isHandled = true;
       }
-    });
+    }
+    if (!isHandled) {
+      flies.forEach((Fly fly) {
+        if (fly.flyRect.contains(d.globalPosition)) {
+          fly.onTapDown();
+        }
+      });
+    }
   }
 }
