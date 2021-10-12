@@ -5,14 +5,14 @@ import 'package:langaw/langaw-game.dart';
 
 class Fly {
   final LangawGame game;
-  Rect flyRect;
+  late Rect flyRect;
   bool isDead = false;
   bool isOffScreen = false;
-  List<Sprite> flyingSprite;
-  Sprite deadSprite;
+  late List<Sprite> flyingSprite;
+  late Sprite deadSprite;
   double flyingSpriteIndex = 0;
   double get speed => game.tileSize * 3;
-  Offset targetLocation;
+  late Offset targetLocation;
 
   Fly(this.game) {
     setTargetLocation();
@@ -29,7 +29,7 @@ class Fly {
   void update(double t) {
     if (isDead) {
       flyRect = flyRect.translate(0, game.tileSize * 12 * t);
-      if (flyRect.top > game.screenSize.height) {
+      if (flyRect.top > game.screenSize!.height) {
         isOffScreen = true;
       }
     } else {
@@ -57,9 +57,9 @@ class Fly {
 
   void setTargetLocation() {
     double x = game.rnd.nextDouble() *
-        (game.screenSize.width - (game.tileSize * 2.025));
+        (game.screenSize!.width - (game.tileSize * 2.025));
     double y = game.rnd.nextDouble() *
-        (game.screenSize.height - (game.tileSize * 2.025));
+        (game.screenSize!.height - (game.tileSize * 2.025));
     targetLocation = Offset(x, y);
   }
 }

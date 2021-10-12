@@ -1,17 +1,16 @@
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
-import 'package:flame/util.dart';
-import 'package:flutter/services.dart';
 import 'package:langaw/langaw-game.dart';
 
 import 'package:flame/flame.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Util flameUtil = Util();
-  await flameUtil.fullScreen();
-  await flameUtil.setOrientation(DeviceOrientation.portraitUp);
+  //Util flameUtil = Util();
+  //await flameUtil.fullScreen();
+  //await flameUtil.setOrientation(DeviceOrientation.portraitUp);
 
   Flame.images.loadAll(<String>[
     'bg/backyard.png',
@@ -40,9 +39,13 @@ void main() async {
   ]);
 
   LangawGame game = LangawGame();
-  runApp(game.widget);
+  runApp(
+    GameWidget(
+      game: game,
+    ),
+  );
 
   TapGestureRecognizer tapper = TapGestureRecognizer();
   tapper.onTapDown = game.onTapDown;
-  flameUtil.addGestureRecognizer(tapper);
+  //flameUtil.addGestureRecognizer(tapper);
 }

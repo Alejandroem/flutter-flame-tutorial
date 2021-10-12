@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/gestures.dart';
 import 'package:langaw/components/agile-fly.dart';
@@ -21,36 +20,35 @@ import 'package:langaw/views/home-view.dart';
 import 'package:langaw/views/lost-view.dart';
 import 'package:langaw/components/score-display.dart';
 
-class LangawGame extends Game {
-  Size screenSize;
-  double tileSize;
-  Random rnd;
+class LangawGame with Loadable, Game {
+  Size? screenSize;
+  late double tileSize;
+  late Random rnd;
 
-  Backyard background;
-  List<Fly> flies;
-  StartButton startButton;
-  HelpButton helpButton;
-  CreditsButton creditsButton;
+  late Backyard background;
+  late List<Fly> flies;
+  late StartButton startButton;
+  late HelpButton helpButton;
+  late CreditsButton creditsButton;
 
-  FlySpawner spawner;
+  late FlySpawner spawner;
 
   View activeView = View.home;
-  HomeView homeView;
-  LostView lostView;
-  HelpView helpView;
-  CreditsView creditsView;
-  ScoreDisplay scoreDisplay;
+  late HomeView homeView;
+  late LostView lostView;
+  late HelpView helpView;
+  late CreditsView creditsView;
+  late ScoreDisplay scoreDisplay;
 
-  int score;
+  int? score;
 
-  LangawGame() {
-    initialize();
-  }
+  LangawGame();
 
   void initialize() async {
     rnd = Random();
-    flies = List<Fly>();
-    resize(await Flame.util.initialDimensions());
+    flies = [];
+    //resize(await Flame.util.initialDimensions());
+    //resize(this.screenSize);
 
     background = Backyard(this);
     startButton = StartButton(this);
@@ -69,8 +67,8 @@ class LangawGame extends Game {
   }
 
   void spawnFly() {
-    double x = rnd.nextDouble() * (screenSize.width - (tileSize * 2.025));
-    double y = rnd.nextDouble() * (screenSize.height - (tileSize * 2.025));
+    double x = rnd.nextDouble() * (screenSize!.width - (tileSize * 2.025));
+    double y = rnd.nextDouble() * (screenSize!.height - (tileSize * 2.025));
 
     switch (rnd.nextInt(5)) {
       case 0:
@@ -91,6 +89,7 @@ class LangawGame extends Game {
     }
   }
 
+  @override
   void render(Canvas canvas) {
     background.render(canvas);
     if (activeView == View.playing) scoreDisplay.render(canvas);
@@ -107,6 +106,7 @@ class LangawGame extends Game {
     if (activeView == View.credits) creditsView.render(canvas);
   }
 
+  @override
   void update(double t) {
     spawner.update(t);
     flies.forEach((Fly fly) => fly.update(t));
@@ -114,9 +114,10 @@ class LangawGame extends Game {
     if (activeView == View.playing) scoreDisplay.update(t);
   }
 
-  void resize(Size size) {
-    screenSize = size;
-    tileSize = screenSize.width / 9;
+  @override
+  void onGameResize(Vector2 gameSize) {
+    screenSize = size.toSize();
+    tileSize = screenSize!.width / 9;
   }
 
   void onTapDown(TapDownDetails d) {
